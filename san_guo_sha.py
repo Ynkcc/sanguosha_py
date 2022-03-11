@@ -1,14 +1,14 @@
 import datetime
-import threading
+#import threading
 import time
 import pyautogui
-
+import os
+import win32api 
 pyautogui.PAUSE = 1
 pyautogui.FAILSAFE = True
 DELAY_TIME = 2
 IMG_BASE_PATH = './res/images/sgs/'
-
-
+'''
 def calculate_time():
     def wrapper(function):
         def execute(*args, **kwargs):
@@ -25,6 +25,7 @@ def calculate_time():
 
     return wrapper
 
+'''
 
 def flag_match_img(img_src, try_time=3, confidence=0.7):
     for i in range(try_time):
@@ -36,17 +37,47 @@ def flag_match_img(img_src, try_time=3, confidence=0.7):
         time.sleep(1)
 
 
-@calculate_time()
+#@calculate_time()
+
 def zhulu_tianxia():
     time.sleep(DELAY_TIME)
     print('\nsubprogram zhu_lu is start...')
     # 冒险 -> 进入逐鹿
-    pyautogui.click(1263, 527)
+    #pyautogui.click(1263, 527)
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'zhulu.png', try_time=1))
+    pyautogui.leftClick(x,y)
     time.sleep(1)
-    pyautogui.click(790, 539)
+    #pyautogui.click(790, 539)
     pyautogui.click(1027, 175, interval=1, clicks=2)  # 可能弹出动画.
-    pos1 = flag_match_img(IMG_BASE_PATH + 'kaishi_tiaozhan.png', try_time=6)
-    pos2 = flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=1)
+    i=0
+    while(i!=100):
+        if i==1:
+            pos6 = flag_match_img(IMG_BASE_PATH + 'yiwai2.png', try_time=6)
+            if pos6:
+                pyautogui.leftClick(pyautogui.center(pos6))
+                x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'yiwai.png', try_time=2))
+                pyautogui.leftClick(x,y)
+                
+
+        pos1 = flag_match_img(IMG_BASE_PATH + 'kaishi_tiaozhan.png', try_time=6)
+        pyautogui.leftClick(pyautogui.center(pos1))
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'zhulu6.png', try_time=2))
+        pyautogui.leftClick(x,y)
+        if flag_match_img(IMG_BASE_PATH + 'zhulu2.png', try_time=2):
+            x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'zhulu7.png', try_time=2,confidence=0.99))
+            pyautogui.leftClick(x,y)
+            x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'zhulu3.png', try_time=2))
+            pyautogui.leftClick(x,y)
+            x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=4))
+            pyautogui.leftClick(x,y)
+            break
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'zhulu4.png', try_time=120))
+        pyautogui.leftClick(x,y)
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'zhulu5.png', try_time=2))
+        pyautogui.leftClick(x,y)
+        i=i+1
+    #pos2 = flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=1)
+    '''
     if pos1 and pos2:
         for i in range(5):
             # 英雄模式 -> 101-125关卡 -> 105关卡 -> 挑战 -> 确定阵容, 挑战 -> 等待进入挑战界面
@@ -71,6 +102,7 @@ def zhulu_tianxia():
         pyautogui.click(pyautogui.center(pos2), clicks=2, interval=2)
     else:
         print('out of expected, may something error in here.')
+    '''
     print('subprogram zhu_lu is over...')
 
 
@@ -109,16 +141,26 @@ def login_sgs():
             exit()
     print('subprogram login_sgs is over...')
 
+def renwu():
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'renwu.png', try_time=2))
+    pyautogui.leftClick(x,y)
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'lingqu.png', try_time=2))
+    pyautogui.leftClick(x,y)
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'renwu2.png', try_time=2))
+    pyautogui.leftClick(x,y)
+    
+
 
 def gonghui_leigu():
     time.sleep(DELAY_TIME)
     print('\nsubprogram gonghui_leigu is start...')
     # 进入公会->擂鼓*3->为了防止已经擂鼓过出现元宝擂鼓界面（增加取消）->返回主界面
-    pyautogui.click(1220, 968)
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'gonghui2.png', try_time=2))
+    pyautogui.leftClick(x,y)
     pos = flag_match_img(IMG_BASE_PATH + 'gonghui_leigu.png', try_time=7)
     if pos:
         pyautogui.click(pyautogui.center(pos), interval=2, clicks=3)
-        pos2 = flag_match_img(IMG_BASE_PATH + 'quxiao.png', try_time=1)
+        pos2 = flag_match_img(IMG_BASE_PATH + 'gonghui3.png', try_time=1)
         if pos2:
             pyautogui.click(pyautogui.center(pos2))
         for i in range(3):
@@ -139,13 +181,27 @@ def wujiang_jiangyin():
     time.sleep(DELAY_TIME)
     print('\nsubprogram wujiang_jiangyin is start...')
     # 点击武将->判断名将堂是否出现->点击将印打开抽取界面->开启一次->关闭抽取界面->返回主界面
-    wujiang_icon = flag_match_img(IMG_BASE_PATH + 'wujiang_icon.png', confidence=0.75)
+    wujiang_icon = flag_match_img(IMG_BASE_PATH + 'wujiang_icon.png',6,0.9)
     if wujiang_icon:
         pyautogui.click(pyautogui.center(wujiang_icon))
     else:
         print('not found wujiang icon in current activity, end of subprogram')
         return False
     pos1 = flag_match_img(IMG_BASE_PATH + 'minjiang_tang.png', try_time=7)
+    pyautogui.click(pyautogui.center(pos1))
+    pos2=flag_match_img(IMG_BASE_PATH + 'jiangyin1.png', try_time=2)
+    if pos2:
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'jiangyin1.png',try_time=1))
+        pyautogui.leftClick(x,y)
+    for i in range(1,8):
+        if i==5:
+            pyautogui.leftClick(477,436)
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'jiangyin'+str(i+1)+'.png',try_time=6))
+        pyautogui.leftClick(x,y)
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=1))
+    pyautogui.leftClick(x,y)
+
+    '''
     pos2 = flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=2)
     if pos1 and pos2:
         pyautogui.click(pyautogui.center(pos1))
@@ -156,6 +212,7 @@ def wujiang_jiangyin():
                 pyautogui.click(308, 499)
                 pyautogui.click(1240, 849)
                 pyautogui.click(1564, 248)
+            
                 break
             else:
                 max_time = max_time - 1
@@ -165,6 +222,7 @@ def wujiang_jiangyin():
         pyautogui.click(pyautogui.center(pos2))
     else:
         print('out of expected, may some errors in here.')
+    '''
     print('subprogram wujiang_jiangin is over...')
 
 
@@ -174,10 +232,18 @@ def sanguo_xiu():
     # 三国秀->三国秀坊(用返回按键来判断是否进入三国秀界面)->开启->开启三国秀后先返回抽取界面,再返回主界面故两次.
     sanguoxiu_icon = flag_match_img(IMG_BASE_PATH + 'sanguoxiu_icon.png', confidence=0.75)
     if sanguoxiu_icon:
-        pyautogui.click(pyautogui.center(sanguoxiu_icon))
+        pyautogui.click(pyautogui.center(sanguoxiu_icon),clicks=3,interval=0.2)
     else:
         print('not found sanguoxiu icon in current activity, end of subprogram')
         return False
+    pos=flag_match_img(IMG_BASE_PATH + 'sanguoxiu1.png',try_time=6)
+    if pos:
+        pyautogui.click(pyautogui.center(pos))
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'sanguoxiu.png', try_time=6))
+    pyautogui.leftClick(x,y)
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=6))
+    pyautogui.click(x,y, clicks=2, interval=2)
+    '''
     pos = flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=6)
     if pos:
         pyautogui.click(1679, 810, interval=2)
@@ -185,6 +251,7 @@ def sanguo_xiu():
         pyautogui.click(pyautogui.center(pos), clicks=2, interval=2)
     else:
         print('out of expected, the program may have some errors')
+        '''
     print('subprogram sanguo_xiu is over... ')
 
 
@@ -193,7 +260,8 @@ def jianglin():
     print('\nsubprogram jianglin is start...')
     max_time = 30
     while max_time:
-        pyautogui.click(924, 867)
+        mao=flag_match_img(IMG_BASE_PATH + 'shashi.png', try_time=1)
+        pyautogui.click(900,mao[1], interval=1, clicks=3)
         pos = flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=1)
         if pos:
             break
@@ -201,20 +269,32 @@ def jianglin():
             print('out of max try times, may some errors in here. end of subprogram.')
             return False
         max_time = max_time - 1
-    pos = flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=1)
     if pos:
         # 聚宝盆->领取奖励->关闭
-        pyautogui.click(1449, 870)
-        pyautogui.click(1170, 683)
-        pyautogui.click(1323, 376)
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'jubao.png', try_time=1))
+        pyautogui.leftClick(x,y)
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'jubao2.png', try_time=1))
+        pyautogui.leftClick(x,y)
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'jubao3.png', try_time=1))
+        pyautogui.leftClick(x,y)
         # 将灵出征部分,包括领取奖励和领取完毕后出征两部分.
-        pyautogui.click(1559, 883), time.sleep(3)
-        pyautogui.click(962, 813), time.sleep(3)
-        pyautogui.click(1146, 787), time.sleep(1)
-        pyautogui.click(710, 831, interval=3, clicks=2)
-        pyautogui.click(856, 672)
-        pyautogui.click(1564, 249)
-        time.sleep(1)
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'chuzheng5.png', try_time=1))
+        pyautogui.leftClick(x,y)
+        if flag_match_img(IMG_BASE_PATH + 'chuzheng6.png', try_time=1):
+            x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'chuzheng6.png', try_time=1))
+            pyautogui.leftClick(x,y)
+            time.sleep(3)
+            x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'chuzheng7.png', try_time=1))
+            pyautogui.leftClick(x,y)
+        if flag_match_img(IMG_BASE_PATH + 'chuzheng3.png', try_time=1):
+            x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'chuzheng3.png', try_time=1))
+            pyautogui.leftClick(x,y)
+            time.sleep(0.1)
+            pyautogui.leftClick(x,y)
+            x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'chuzheng4.png', try_time=1))
+            pyautogui.leftClick(x,y)
+        x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'chuzheng2.png', try_time=4))
+        pyautogui.leftClick(x,y)
         pyautogui.click(pyautogui.center(pos))
     else:
         print(f'out of expected, may not into jianglin activity, some errors in here.')
@@ -224,6 +304,18 @@ def jianglin():
 
 def open_browser(key='2'):
     print('start to open browser')
+    win32api.WinExec('"C:\Program Files\Google\Chrome\Application\chrome.exe" http://web.sanguosha.com/login/index.html') 
+    #os.system('"C:\Program Files\Google\Chrome\Application\chrome.exe" http://web.sanguosha.com/login/index.html')
+    x,y=pyautogui.center(flag_match_img(IMG_BASE_PATH + 'jinru.png', try_time=60))
+    pyautogui.leftClick(x,y)
+    pyautogui.click(924, 867, clicks=3, interval=10)
+    pos1=flag_match_img(IMG_BASE_PATH + 'moshi.png', try_time=2)
+    pos2=flag_match_img(IMG_BASE_PATH + 'fanhui.png', try_time=2)
+    if pos1:
+        pyautogui.click(pyautogui.center(pos1), clicks=2)
+    if pos2:
+        pyautogui.click(pyautogui.center(pos2), clicks=2)
+    """
     pyautogui.hotkey('winleft', 'd')
     time.sleep(1)
     if key == '1':
@@ -238,7 +330,7 @@ def open_browser(key='2'):
             pyautogui.click(pyautogui.center(pos2), clicks=2)
         else:
             exit()
-
+            """
 
 def start_game():
     open_browser()
@@ -250,7 +342,7 @@ def start_game():
     gonghui_leigu()
     # pyautogui.click(1892, 15)  # 关闭浏览器
 
-
+    '''
 def timer():
     now_time = datetime.datetime.now()
     print(f'现在时间:{now_time}')
@@ -265,7 +357,7 @@ def timer():
     m_timer = threading.Timer(timer_start_time, start_game)
     m_timer.start()
 
-
+    '''
 def with_start():
     def m_execute(m_argv):
         for x in m_argv:
@@ -274,11 +366,13 @@ def with_start():
             if x == '2':
                 jianglin()
 
-    print('第一参数:1.启动Edge. 2启动Chrome. 3.在游戏主界面. t.定时00:01:00运行')
+    '''print('第一参数:1.启动Edge. 2启动Chrome. 3.在游戏主界面. t.定时00:01:00运行')
     print('第二参数(可多选):1.逐鹿天下 2.将灵')
     string = input('输入参数: ')
     argv1 = string[:1]
-    argv2 = string[1:]
+    argv2 = string[1:]'''
+    argv1="3";
+    argv2="1";
     if argv1 == '1':
         open_browser(key='1')
         login_sgs()
@@ -303,4 +397,10 @@ def with_start():
 
 
 if __name__ == '__main__':
-    with_start()
+    open_browser()
+    sanguo_xiu()
+    wujiang_jiangyin()
+    jianglin()
+    zhulu_tianxia()
+    gonghui_leigu()
+    renwu()
